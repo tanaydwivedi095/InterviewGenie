@@ -29,7 +29,8 @@ This project leverages Retrieval-Augmented Generation (RAG) to create a dynamic 
 
 ## Note
 
-If you want to increase the dataset, simply drop the PDF files into a folder named `Dataset`. The model will automatically process the new data.
+1. If you want to increase the dataset, simply drop the PDF files into a folder named `Dataset`. The model will automatically process the new data.
+2. Before running the pipeline, download the necessary embeddings, data, and the `Dataset` folder from [this Google Drive link](https://drive.google.com/drive/folders/1JvJk0zykBL1H_SAWPehvmcQBJ0U0gP9Z?usp=sharing).
 
 ---
 
