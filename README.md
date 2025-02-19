@@ -83,6 +83,29 @@ To train your own RAG pipeline:
 4. **Generate and Validate Responses:**
    - Use the trained RAG pipeline to respond intelligently to user queries by generating context-aware responses.
 
+## Required Files
+
+Before using the model, download the required files for embeddings and data from the link below:
+
+- [embeddings_vs.csv and data.csv](https://drive.google.com/file/d/1i_PkHlaUCbm5_ZafpTgFOHwdv9AITJ3S/view?usp=sharing)
+
+Place these files in the project directory to ensure proper functioning of the InterviewGenie application.
+
+## Running the Streamlit Application
+
+To run the `gui.py` Streamlit application, follow these steps:
+
+1. Open a terminal or command prompt.
+2. Navigate to the project directory:
+   ```sh
+   cd InterviewGenie
+   ```
+3. Run the Streamlit application:
+   ```sh
+   streamlit run gui.py
+   ```
+4. Access the application in your browser using the link provided by Streamlit (usually `http://localhost:8501`).
+
 ## Code Flow Explanation
 
 The following section explains the purpose of each code file and how they work together:
@@ -167,3 +190,4 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ## License
 
 MIT License
+
