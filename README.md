@@ -1,155 +1,169 @@
 # InterviewGenie
 
-**InterviewGenie** is an advanced interview bot designed to:
+## Overview
 
-- Ask intelligent and relevant questions to candidates.
-- Score candidates based on their responses.
-- Answer questions posed by the interviewee.
-
-This project leverages Retrieval-Augmented Generation (RAG) to create a dynamic and interactive interview process. It integrates multiple versions of trained models, scaling from smaller datasets to massive ones, ensuring adaptability and precision.
-
----
+InterviewGenie is an AI-powered interview assistant capable of acting as both an **Interviewee** and an **Interviewer**. It leverages Retrieval-Augmented Generation (RAG) to provide intelligent responses and questions, making it a powerful tool for candidates and interviewers alike.
 
 ## Features
 
-- **The model is able to answer the questions asked by the interviewee.**
-- **The model is able to ask interviewee questions and assess the answer given by the interviewee uploaded in form of text or audio.**
-- **Audio to Text Conversion:** Converts audio responses into text for scoring and evaluation.
-- **Dynamic Questioning:** Generates interview questions tailored to the context.
-- **Candidate Scoring:** Analyzes and scores candidate responses.
-- **Interactive Q&A:** Answers candidate queries during the interview process.
-- **Streamlit UI:** A user-friendly interface where users can drop questions and instantly receive answers.
-- **Scalable Models:** Includes multiple model versions trained on datasets ranging from 23K tokens to 6.7M tokens.
+### 1. **Interviewee Mode**
 
-### Upcoming Feature
+In this mode, the user provides questions, and InterviewGenie answers them using a RAG pipeline trained on multiple datasets. The model has been trained in five versions:
 
-- **3D Interviewer Avatar:** A 3D face representing an interviewer will be integrated for a more engaging and realistic experience.
+- **Version 1:** 23K tokens
+- **Version 2:** 96K tokens
+- **Version 3:** 0.26M tokens
+- **Version 4:** 2.76M tokens
+- **Version 5:** 6.8M tokens
 
----
+### 2. **Interviewer Mode**
 
-## Note
+In this mode, InterviewGenie generates interview questions and evaluates responses. There are two models available:
 
-1. If you want to increase the dataset, simply drop the PDF files into a folder named `Dataset`. The model will automatically process the new data.
-2. Before running the pipeline, download the necessary embeddings, data, and the `Dataset` folder from [this Google Drive link](https://drive.google.com/drive/folders/1JvJk0zykBL1H_SAWPehvmcQBJ0U0gP9Z?usp=sharing).
+#### **Model 1: Free Model**
 
----
+- Uses `google/gemma-2b-it`
+- Generates a set of **10 to 15** questions
+- Allows the user to answer questions during the session
+- At the end of the interview, displays all the answers in one place for review
 
-## File Details
+#### **Model 2: Paid Model**
 
-The repository contains the following files, representing different versions of the model:
+- Uses `OpenAI/o1-mini`
+- Provides additional functionalities:
+  - Users can select the **difficulty level** of interview questions
+  - The model **scores responses** out of 10
+  - At the end of the interview, it provides an **aggregate average score**
+  - **Future Feature:** Personalized feedback to help users improve performance
 
-1. **`InterviewBot_v1.ipynb`**: Model trained on 23K tokens.
-2. **`InterviewBot_v2.ipynb`**: Model trained on 96K tokens.
-3. **`InterviewBot_v3.ipynb`**: Model trained on 0.26M tokens.
-4. **`InterviewBot_v4.ipynb`**: Model trained on 2.65M tokens.
-5. **`InterviewBot_v5.ipynb`**: Model trained on 6.70M tokens.
-6. **`ui.py`**: Streamlit UI for interacting with the bot.
-7. **`Speech to Text.ipynb`**: Jupyter notebook for converting audio responses to text.
+### 3. **Streamlit Application**
 
-Each file includes the full training pipeline, evaluation, and deployment logic for the respective version.
+InterviewGenie includes a Streamlit application (`gui.py`) that allows consumers to easily interact with the model. The application provides an intuitive graphical interface for both the Interviewee and Interviewer modes, enhancing user experience.
 
----
+#### How It Works:
+
+1. **Interviewee Mode:**
+   - Users can input their questions through the GUI.
+   - The application processes the question using the RAG pipeline and generates a context-aware answer based on trained embeddings and models.
+
+2. **Interviewer Mode:**
+   - Users can choose between the Free or Paid model:
+     - **Free Model:** Generates 10-15 questions using `google/gemma-2b-it`.
+       - Lets users answer questions during the session.
+       - Displays all answers at the end of the interview for review.
+     - **Paid Model:** Users can input an API key for enhanced functionality with `OpenAI/o1-mini`:
+       - Select question difficulty using a slider.
+       - Input answers for each question and receive a score out of 10.
+       - Get an aggregate average score at the end of the session.
+       - View all answers and their respective scores.
+
+3. **Session Management:**
+   - Tracks user progress, including current question index, answers, and scores.
+   - Provides feedback and results after the session ends.
+
+## Training Your Own RAG Pipeline
+
+To train your own RAG pipeline:
+
+1. **Prepare Your Dataset:**
+   - Create a folder named `Dataset` in the project directory.
+   - Add all PDF files containing training data to the `Dataset` folder.
+
+2. **Run the Training Notebook:**
+   - Open the `InterviewBot_v5.ipynb` notebook in Jupyter Notebook or JupyterLab.
+   - Follow these steps in the notebook:
+     - Load and preprocess the PDF data into embeddings.
+     - Use the RAG pipeline to index the dataset for efficient retrieval.
+     - Fine-tune the large language model (LLM) using HuggingFace's `transformers` library.
+     - Generate and evaluate answers by augmenting prompts for better LLM instruction.
+
+3. **Retrieve Top Contexts:**
+   - The notebook helps retrieve the top-k relevant contexts from the dataset for any query.
+
+4. **Generate and Validate Responses:**
+   - Use the trained RAG pipeline to respond intelligently to user queries by generating context-aware responses.
+
+## Code Flow Explanation
+
+The following section explains the purpose of each code file and how they work together:
+
+### 1. **gui.py**
+   - The main Streamlit application that allows users to interact with the system.
+   - Users can switch between Interviewee and Interviewer modes.
+   - Handles user input and displays generated questions or answers.
+   - Relies on the `Interviewer` and `Interviewee` classes for backend logic.
+
+### 2. **Interviewer.py**
+   - Implements the `Interviewer` class, which handles the generation of questions.
+   - Supports both Free (Gemma-based) and Paid (OpenAI-based) question generation.
+   - Scoring functionality evaluates user answers based on prompts sent to OpenAI’s LLMs.
+
+### 3. **Interviewee.py**
+   - Implements the `Interviewee` class, which retrieves answers based on user queries.
+   - Uses pre-trained embeddings and a transformer-based language model (`google/gemma-2b-it`) to find relevant context and generate answers.
+   - Includes functionality for cleaning and formatting LLM-generated responses.
+
+### 4. **OpenAI_QuestionGenerator.py**
+   - Implements a question generator using OpenAI’s APIs.
+   - Allows users to define the difficulty level of the questions.
+   - Processes LLM outputs to structure questions in a specific format.
+
+### 5. **Gemma_QuestionGenerator.py**
+   - Implements a free question generator using `google/gemma-2b-it`.
+   - Generates questions in various categories such as definitions, formulas, scenarios, and case studies.
+   - Allows for the customization of generated questions by setting parameters like the number of questions and generation temperature.
+   - Supports preprocessing of generated questions to remove extra formatting and inconsistencies.
+
+### 6. **Notebooks (e.g., InterviewBot_v5.ipynb, QuestionGenerator_v1.ipynb)**
+   - Jupyter notebooks are used for training and fine-tuning the RAG pipeline.
+   - Steps include data preprocessing, embedding creation, and LLM prompt augmentation.
+   - `InterviewBot_v5.ipynb` is the most recent version, incorporating improvements in context retrieval and answer generation.
+
+### 7. **Script_RAG_v1.ipynb**
+   - Focused on implementing the RAG pipeline with a script-based approach.
+   - Details the embedding retrieval process and query augmentation using the HuggingFace transformers library.
+
+### 8. **Speech_to_Text_v1.ipynb**
+   - Implements a speech-to-text pipeline for converting verbal queries into text.
+   - This can be integrated with the InterviewGenie GUI for an enhanced user experience.
+
+### File Relationships
+   - `gui.py` interacts with both `Interviewer.py` and `Interviewee.py` to handle user requests.
+   - `Interviewer.py` relies on `OpenAI_QuestionGenerator.py` or `Gemma_QuestionGenerator.py` for question creation.
+   - `Interviewee.py` processes queries and utilizes pre-computed embeddings and transformer models for context-aware answers.
+   - The notebooks (`InterviewBot_v5.ipynb`, etc.) are used to train and prepare the underlying models and embeddings required for `Interviewee.py` and `Interviewer.py`.
+
+## Future Enhancements
+
+- Personalized feedback based on interview responses
+- Expanded dataset training for more accurate answers
+- Support for additional question types and domains
+- Enable users to answer questions by speaking their responses instead of typing
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/tanaydwivedi095/InterviewGenie.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd InterviewGenie
-   ```
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Clone the repository:
 
----
+```sh
+git clone https://github.com/tanaydwivedi095/InterviewGenie.git
+```
 
-## Usage
+### Navigate to the project directory:
 
-### Streamlit UI
+```sh
+cd InterviewGenie
+```
 
-1. Run the Streamlit application:
-   ```bash
-   streamlit run ui.py
-   ```
-2. A browser window will open. Enter your question into the input field to receive an answer.
+### Install the required dependencies:
 
-### Notebooks
-
-1. Open the desired model file (e.g., `InterviewBot_v5.ipynb`) in Jupyter Notebook or Google Colab.
-2. Execute the cells step-by-step to:
-   - Load the pre-trained model.
-   - Initialize the RAG pipeline.
-   - Interact with the bot.
-3. Customize the bot's behavior, dataset, or scoring mechanisms as needed.
-
-### Audio to Text Conversion
-
-1. Open the `Speech to Text.ipynb` file in Jupyter Notebook or Google Colab.
-2. Upload an audio file containing the interviewee's response.
-3. Run the notebook to convert the audio to text.
-4. Use the converted text for scoring and evaluation.
-
----
-
-## Libraries Used
-
-The project utilizes the following key libraries:
-
-- **Transformers:** `AutoModelForCausalLM`, `AutoTokenizer`, `BitsAndBytesConfig`
-- **SentenceTransformer**
-- **PyTorch** (`torch`)
-- **NumPy**, **Pandas**
-- **TQDM**: For progress tracking
-- **FITZ**: PDF processing
-- **Regular Expressions** (`re`)
-- **Streamlit**: For building the UI
-
----
-
-## Model Details
-
-### Versions and Training Data:
-
-1. **V1**: Trained on **23K tokens** - Basic functionality with limited context.
-2. **V2**: Trained on **96K tokens** - Enhanced understanding and response generation.
-3. **V3**: Trained on **0.26M tokens** - Intermediate-level performance.
-4. **V4**: Trained on **2.65M tokens** - High-quality responses with broader context handling.
-5. **V5**: Trained on **6.70M tokens** - Advanced capabilities, optimal for complex interviews.
-
----
+```sh
+pip install -r requirements.txt
+```
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add your message here"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. Open a Pull Request.
-
----
+Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## Acknowledgements
-
-Special thanks to the developers of the libraries and tools used in this project for enabling seamless integration and implementation of advanced AI capabilities.
-
+MIT License
